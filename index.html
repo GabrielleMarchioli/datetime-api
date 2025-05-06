@@ -6,7 +6,7 @@
   <title>Data e Hora</title>
   <script src="https://cdn.jsdelivr.net/npm/react@18.2.0/umd/react.production.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/react-dom@18.2.0/umd/react-dom.production.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/babel-standalone@7.22.9/babel.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@babel/standalone@7.23.2/babel.min.js"></script>
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
   <style>
     @keyframes fadeIn {
@@ -26,11 +26,10 @@
       const [error, setError] = React.useState(null);
 
       React.useEffect(() => {
-        // Substitua pela URL da sua API (local ou Render)
-        const apiUrl = 'http://localhost:3000/datetime'; // Use 'https://datetime-api.onrender.com/datetime' se implantado
+        const apiUrl = 'https://datetime-api-pefn.onrender.com/datetime';
         fetch(apiUrl)
           .then(response => {
-            if (!response.ok) throw new Error('Erro ao conectar com a API');
+            if (!response.ok) throw new Error('Erro ao conectar com a API: ' + response.statusText);
             return response.json();
           })
           .then(data => setDatetime(data))
@@ -52,7 +51,7 @@
                   Erro: {error}
                 </p>
                 <p className="text-gray-500 text-sm">
-                  Verifique se a API está rodando e tente novamente.
+                  Verifique se a API está rodando em https://datetime-api-pefn.onrender.com/datetime e tente novamente.
                 </p>
               </div>
             ) : (
@@ -66,15 +65,20 @@
               </div>
             )}
             <p className="mt-6 text-sm text-gray-500 text-center">
-              Powered by Express & React
+              2025, Gabrielle Marchioli
             </p>
           </div>
         </div>
       );
     }
 
-    const root = ReactDOM.createRoot(document.getElementById('root'));
-    root.render(<App />);
+    try {
+      const root = ReactDOM.createRoot(document.getElementById('root'));
+      root.render(<App />);
+    } catch (e) {
+      console.error('Erro ao renderizar o React:', e);
+      document.getElementById('root').innerHTML = '<div class="text-center text-red-500">Erro ao carregar a aplicação. Verifique o console para detalhes.</div>';
+    }
   </script>
 </body>
 </html>
