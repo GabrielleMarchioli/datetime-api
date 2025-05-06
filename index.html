@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Data e Hora</title>
+  <script src="https://cdn.jsdelivr.net/npm/react@18.2.0/umd/react.production.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/react-dom@18.2.0/umd/react-dom.production.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/babel-standalone@7.22.9/babel.min.js"></script>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <style>
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .animate-fadeIn {
+      animation: fadeIn 0.8s ease-out;
+    }
+  </style>
+</head>
+<body className="bg-gradient-to-br from-indigo-100 via-purple-100 to-pink-100 min-h-screen">
+  <div id="root"></div>
+  <script type="text/babel">
+    function App() {
+      const [datetime, setDatetime] = React.useState({ date: '', time: '' });
+      const [error, setError] = React.useState(null);
+
+      React.useEffect(() => {
+        // Substitua pela URL da sua API (local ou Render)
+        const apiUrl = 'http://localhost:3000/datetime'; // Use 'https://datetime-api.onrender.com/datetime' se implantado
+        fetch(apiUrl)
+          .then(response => {
+            if (!response.ok) throw new Error('Erro ao conectar com a API');
+            return response.json();
+          })
+          .then(data => setDatetime(data))
+          .catch(error => {
+            console.error('Erro ao buscar data/hora:', error);
+            setError(error.message);
+          });
+      }, []);
+
+      return (
+        <div className="flex items-center justify-center min-h-screen p-4">
+          <div className="bg-white bg-opacity-90 backdrop-blur-md rounded-2xl shadow-2xl p-8 max-w-md w-full animate-fadeIn">
+            <h1 className="text-3xl font-extrabold text-center text-gray-800 mb-6 bg-clip-text text-transparent bg-gradient-to-r from-indigo-500 to-purple-600">
+              Data e Hora Atual
+            </h1>
+            {error ? (
+              <div className="text-center">
+                <p className="text-red-500 font-medium animate-pulse mb-2">
+                  Erro: {error}
+                </p>
+                <p className="text-gray-500 text-sm">
+                  Verifique se a API está rodando e tente novamente.
+                </p>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                <p className="text-lg text-gray-700 hover:text-indigo-600 transition-colors duration-300">
+                  <strong className="font-semibold">Data:</strong> {datetime.date || 'Carregando...'}
+                </p>
+                <p className="text-lg text-gray-700 hover:text-indigo-600 transition-colors duration-300">
+                  <strong className="font-semibold">Hora:</strong> {datetime.time || 'Carregando...'}
+                </p>
+              </div>
+            )}
+            <p className="mt-6 text-sm text-gray-500 text-center">
+              Powered by Express & React
+            </p>
+          </div>
+        </div>
+      );
+    }
+
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(<App />);
+  </script>
+</body>
+</html>
